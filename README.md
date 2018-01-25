@@ -1,2 +1,2 @@
 # komando
-a launcher application in gtkmm with vim shortcuts
+Software in the manner of gmrun but with vim-style shortcuts.
