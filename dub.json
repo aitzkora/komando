@@ -1,0 +1,12 @@
+{
+	"name": "komando",
+	"authors": [
+		"fux"
+	],
+	"dependencies": {
+		"gtk-d": "~>3.7.3"
+	},
+	"description": "a cli launcher with vim shortcut for completion",
+	"copyright": "Copyright © 2018, fux",
+	"license": "GPL-v3"
+}
