@@ -41,17 +41,25 @@ class TextLine : Entry
              case GdkKeysyms.GDK_i: commandMode = false;
                                     break;
              case GdkKeysyms.GDK_x: assert(cursorPosition < content.length);
-                                    content[cursorPosition-1 .. $-1] = content[cursorPosition .. $].dup;
-                                    content.length--;
-                                    setText(content.idup);
-                                    cursorPosition--;
+                                    if (cursorPosition > 0) 
+                                    {
+                                        content[cursorPosition .. $-1] = content[cursorPosition+1 .. $].dup;
+                                        content.length--;
+                                        setText(content.idup);
+                                        cursorPosition--;
+                                    }
                                     break;
-             case GdkKeysyms.GDK_l: if (cursorPosition < cursorPosition -1)
+             case GdkKeysyms.GDK_l: if (cursorPosition < content.length -1)
                                         cursorPosition++; 
                                     break;
-             case GdkKeysyms.GDK_h: if (cursorPosition > 1)
+             case GdkKeysyms.GDK_h: if (cursorPosition > 0)
                                         cursorPosition--; 
                                     break;
+             case GdkKeysyms.GDK_dollar: cursorPosition = cast(uint)(content.length - 1);
+                                         break;
+             case GdkKeysyms.GDK_caret: cursorPosition = 0;
+                                         break;
+
              default:break;
          }
      }
@@ -60,13 +68,23 @@ class TextLine : Entry
          switch(even.keyval) {
              case GdkKeysyms.GDK_Escape: commandMode = true;
                                          break; 
-           
-             default: content.insertInPlace(cursorPosition, Keymap.keyvalName(even.keyval));
+             default: content.insertInPlace(cursorPosition, keyToString(even.keyval));
+                      cursorPosition++;
                       setText(content.idup);
                      break;
          }
      }
      return true;
    }
-    
+
+    string keyToString(uint keyval)
+    {
+        switch(keyval)
+        {
+            case GdkKeysyms.GDK_space: return " ";
+            case GdkKeysyms.GDK_BackSpace : return "";
+            default:return Keymap.keyvalName(keyval);
+        }
+    }
+
   }

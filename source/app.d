@@ -15,7 +15,7 @@ void main(string[] args)
 {
     Main.init(args);
     MainWindow win = new MainWindow("Komandoa : ");
-    win.add(new TextLine("one sample čtext"));
+    win.add(new TextLine("une chaine d'exemple"));
     win.showAll();
     Main.run();
 }
