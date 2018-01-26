@@ -40,13 +40,21 @@ class TextLine : Entry
          {
              case GdkKeysyms.GDK_i: commandMode = false;
                                     break;
-             case GdkKeysyms.GDK_x: assert(cursorPosition < content.length);
-                                    if (cursorPosition > 0) 
+             case GdkKeysyms.GDK_x: if (cursorPosition < content.length)
                                     {
-                                        content[cursorPosition .. $-1] = content[cursorPosition+1 .. $].dup;
-                                        content.length--;
-                                        setText(content.idup);
-                                        cursorPosition--;
+                                        if (cursorPosition > 0) 
+                                        {
+                                            content[cursorPosition-1 .. $-1] = content[cursorPosition .. $].dup;
+                                            content.length--;
+                                            setText(content.idup);
+                                            cursorPosition--;
+                                        }
+                                        else 
+                                        {
+                                            content[cursorPosition .. $-1] = content[cursorPosition + 1 .. $].dup;
+                                            content.length--;
+                                            setText(content.idup);
+                                        }
                                     }
                                     break;
              case GdkKeysyms.GDK_l: if (cursorPosition < content.length -1)
