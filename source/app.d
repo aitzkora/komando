@@ -9,23 +9,13 @@ import gtk.Box;
 import gdk.Color;
 import gtk.Label;
 import gtk.c.types;
+import textline;
 
 void main(string[] args)
 {
     Main.init(args);
     MainWindow win = new MainWindow("Komandoa : ");
-    win.add(new TextLine("one sample text"));
+    win.add(new TextLine("one sample čtext"));
     win.showAll();
     Main.run();
-}
-
-class TextLine : Entry
-{
-    this(in string text)
-    {
-        super(text);
-        modifyFont("Arial", 14);
-        modifyFg(StateType.NORMAL, new Color(0xFF,00,0xFF));
-        modifyBg(StateType.NORMAL, new Color(0x00,00,0x00));
-    }
 }
