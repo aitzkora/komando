@@ -1,5 +1,7 @@
 module textline;
 
+public import textline.history;
+
 import gtk.Entry;
 import gtk.c.types;
 import gdk.Color;
@@ -7,65 +9,41 @@ import gdk.Event;
 import gtk.Widget;
 import std.stdio;
 import gdk.Keysyms;
-import std.algorithm;
-import std.array;
 import gdk.Keymap;
 
 class TextLine : Entry
 {
-  char[] content;
-  uint cursorPosition;
-  bool commandMode;
+  History hist; 
 
   this(in string text)
     {
         super(text);
-        content = text.dup;
-        cursorPosition = cast(uint)text.length-1;
-        commandMode = true;
+        hist = new History(text);
         // modify aspect 
         modifyFont("Arial", 14);
         modifyFg(StateType.NORMAL, new Color(0xFF,00,0xFF));
         modifyBg(StateType.NORMAL, new Color(0x00,00,0x00));
-        //setHalign(0.);
         // add callbacks
         addOnKeyPress(&keysAnalyze);
     }
-   private bool keysAnalyze(GdkEventKey * even, Widget widget)
+   
+  private bool keysAnalyze(GdkEventKey * even, Widget widget)
    {
-      //GdkEventKey *ev = even.key;
-     if (commandMode) 
+     if (hist.getCommandMode()) 
      {
          switch(even.keyval) 
          {
-             case GdkKeysyms.GDK_i: commandMode = false;
+            case GdkKeysyms.GDK_i: hist.setCommandMode(false);
                                     break;
-             case GdkKeysyms.GDK_x: if (cursorPosition < content.length)
-                                    {
-                                        if (cursorPosition > 0) 
-                                        {
-                                            content[cursorPosition-1 .. $-1] = content[cursorPosition .. $].dup;
-                                            content.length--;
-                                            setText(content.idup);
-                                            cursorPosition--;
-                                        }
-                                        else 
-                                        {
-                                            content[cursorPosition .. $-1] = content[cursorPosition + 1 .. $].dup;
-                                            content.length--;
-                                            setText(content.idup);
-                                        }
-                                    }
+             case GdkKeysyms.GDK_x: setText(hist.removeCharacter());
                                     break;
-             case GdkKeysyms.GDK_l: if (cursorPosition < content.length -1)
-                                        cursorPosition++; 
+             case GdkKeysyms.GDK_l: hist.goRight();
                                     break;
-             case GdkKeysyms.GDK_h: if (cursorPosition > 0)
-                                        cursorPosition--; 
+             case GdkKeysyms.GDK_h: hist.goLeft();
                                     break;
-             case GdkKeysyms.GDK_dollar: cursorPosition = cast(uint)(content.length - 1);
+             case GdkKeysyms.GDK_dollar: hist.goEndOfLine();
                                          break;
-             case GdkKeysyms.GDK_caret: cursorPosition = 0;
+             case GdkKeysyms.GDK_caret: hist.goStartOfLine();
                                          break;
 
              default:break;
@@ -74,12 +52,10 @@ class TextLine : Entry
      else // we are in insert mode
      { 
          switch(even.keyval) {
-             case GdkKeysyms.GDK_Escape: commandMode = true;
+             case GdkKeysyms.GDK_Escape: hist.setCommandMode(true);
                                          break; 
-             default: content.insertInPlace(cursorPosition, keyToString(even.keyval));
-                      cursorPosition++;
-                      setText(content.idup);
-                     break;
+             default: setText(hist.insertCharacter(keyToString(even.keyval)));
+                      break;
          }
      }
      return true;
