@@ -11,11 +11,17 @@ import gtk.Label;
 import gtk.c.types;
 import textline;
 
+import std.getopt;
+
 void main(string[] args)
 {
+    bool debugFlag; 
+    auto optArgs = getopt(args, "debug", &debugFlag);
+    
     Main.init(args);
     MainWindow win = new MainWindow("Komandoa : ");
-    win.add(new TextLine("une chaine d'exemple"));
+      
+    win.add(new TextLine("une chaine d'exemple", debugFlag));
     win.showAll();
     Main.run();
 }

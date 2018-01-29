@@ -15,10 +15,11 @@ class TextLine : Entry
 {
   History hist; 
 
-  this(in string text)
+  this(in string text, bool debugFlag)
     {
         super(text);
-        hist = new History(text);
+        this.debugFlag = debugFlag;
+        hist = new History(text, debugFlag);
         // modify aspect 
         modifyFont("Arial", 14);
         modifyFg(StateType.NORMAL, new Color(0xFF,00,0xFF));

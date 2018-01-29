@@ -10,11 +10,16 @@ class History
     private uint cursorPosition;
     private bool commandMode;
 
-    this(in string text)
+    this(in string text, bool debugFlag)
     {
         content = text.dup ~ "_";
         cursorPosition = cast(uint)text.length;
         commandMode = true;
+        this.debugFlag = debugFlag;
+        if (debugFlag)
+        {
+           logFile = open("/tmp/komando.log","w");
+        }
     }
 
     string getContent()
@@ -35,6 +40,10 @@ class History
     void setCommandMode(bool mode)
     {
         commandMode = mode;
+        if (debugFlag)
+        {
+           logFile.writef("commande mode = %d\n", mode);
+        }
     }
      
     string removeCharacter()
