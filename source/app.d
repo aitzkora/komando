@@ -15,13 +15,19 @@ import std.getopt;
 
 void main(string[] args)
 {
-    bool debugFlag; 
+    bool debugFlag;
     auto optArgs = getopt(args, "debug", &debugFlag);
-    
+
+    File debugFile;
+    if (debugFlag)
+    {
+        debugFile = File("/tmp/komandoLog.txt", "wb");
+    }
+
     Main.init(args);
     MainWindow win = new MainWindow("Komandoa : ");
-      
-    win.add(new TextLine("une chaine d'exemple", debugFlag));
+
+    win.add(new TextLine("une chaine d'exemple", debugFile);
     win.showAll();
     Main.run();
 }

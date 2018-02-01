@@ -15,11 +15,11 @@ class TextLine : Entry
 {
   History hist; 
 
-  this(in string text, bool debugFlag)
+  this(in string text, in File ref debugFile)
     {
         super(text);
-        this.debugFlag = debugFlag;
-        hist = new History(text, debugFlag);
+        this.debugFile & = debugFile;
+        hist = new History(text, debugFile);
         // modify aspect 
         modifyFont("Arial", 14);
         modifyFg(StateType.NORMAL, new Color(0xFF,00,0xFF));
@@ -27,12 +27,17 @@ class TextLine : Entry
         // add callbacks
         addOnKeyPress(&keysAnalyze);
     }
-   
+
+  bool isDebugOn()
+  {
+      return debugFile.isOpen();
+  }
+
   private bool keysAnalyze(GdkEventKey * even, Widget widget)
    {
-     if (hist.getCommandMode()) 
+     if (hist.getCommandMode())
      {
-         switch(even.keyval) 
+         switch(even.keyval)
          {
             case GdkKeysyms.GDK_i: hist.setCommandMode(false);
                                     break;
@@ -51,10 +56,12 @@ class TextLine : Entry
          }
      }
      else // we are in insert mode
-     { 
+     {
          switch(even.keyval) {
              case GdkKeysyms.GDK_Escape: hist.setCommandMode(true);
-                                         break; 
+                                         break;
+             case GdkKeysyms.GDK_Return: hist.execCommandMode();
+                                         break;
              default: setText(hist.insertCharacter(keyToString(even.keyval)));
                       break;
          }
