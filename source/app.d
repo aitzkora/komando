@@ -12,7 +12,7 @@ import gtk.c.types;
 import textline;
 
 import std.getopt;
-
+import std.stdio;
 void main(string[] args)
 {
     bool debugFlag;
@@ -21,13 +21,13 @@ void main(string[] args)
     File debugFile;
     if (debugFlag)
     {
-        debugFile = File("/tmp/komandoLog.txt", "wb");
+        debugFile.open("/tmp/komandoLog.txt", "w");
     }
 
     Main.init(args);
     MainWindow win = new MainWindow("Komandoa : ");
 
-    win.add(new TextLine("une chaine d'exemple", debugFile);
+    win.add(new TextLine("une chaine d'exemple", debugFile));
     win.showAll();
     Main.run();
 }

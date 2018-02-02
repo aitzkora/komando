@@ -2,29 +2,28 @@ module textline.history;
 
 import std.algorithm;
 import std.array;
-
+import std.stdio;
 
 class History 
 {
     private char[] content;
     private uint cursorPosition;
     private bool commandMode;
+    File debugFile;
+    bool isDebugOn;
 
-    this(in string text, bool debugFlag)
+    this(in string text, ref File debugFile)
     {
         content = text.dup ~ "_";
         cursorPosition = cast(uint)text.length;
         commandMode = true;
-        this.debugFlag = debugFlag;
-        if (debugFlag)
-        {
-           logFile = open("/tmp/komando.log","w");
-        }
+        this.debugFile = debugFile;
+        isDebugOn = debugFile.isOpen();
     }
 
     string getContent()
     {
-        return content[0 .. $-1].idup;
+        return content.idup;
     }
 
     int getCursorPosition()
@@ -40,29 +39,52 @@ class History
     void setCommandMode(bool mode)
     {
         commandMode = mode;
-        if (debugFlag)
+        if (isDebugOn)
         {
-           logFile.writef("commande mode = %d\n", mode);
+            debugFile.writeln("commande mode = ", commandMode);
         }
     }
-     
+
+    void execCommandMode()
+    {
+        if (isDebugOn)
+        {
+            debugFile.writeln("ERROR : exec commande No yet implemented");
+        }
+
+    }
+
+
     string removeCharacter()
     {
-        if (cursorPosition < content.length)
+        if (content.length >= 1)
         {
-            if (cursorPosition > 1) 
+            if (cursorPosition >= 1)
             {
-                content[cursorPosition-1 .. $-1] = content[cursorPosition .. $].dup;
+                content[cursorPosition .. $ - 1] = content[cursorPosition + 1 .. $].dup;
                 content.length--;
                 cursorPosition--;
             }
-            else 
+            else
             {
                 content[cursorPosition .. $-1] = content[cursorPosition + 1 .. $].dup;
                 content.length--;
             }
-        } 
-       return content[0 .. $-1].idup; 
+            if (isDebugOn)
+            {
+                debugFile.writef("remove char in %d-position content → %s\n", content);
+            }
+        }
+        else
+        {
+            if (isDebugOn)
+            {
+                debugFile.writef("WARNING : cannot remove any character, the string is empty");
+            }
+
+        }
+
+        return content.idup;
     }
 
     string insertCharacter(in string character)

@@ -13,12 +13,14 @@ import gdk.Keymap;
 
 class TextLine : Entry
 {
-  History hist; 
-
-  this(in string text, in File ref debugFile)
+  History hist;
+  File debugFile;
+  bool isDebugOn;
+  this(in string text, ref File debugFile)
     {
         super(text);
-        this.debugFile & = debugFile;
+        this.debugFile = debugFile;
+        isDebugOn = debugFile.isOpen();
         hist = new History(text, debugFile);
         // modify aspect 
         modifyFont("Arial", 14);
@@ -27,11 +29,6 @@ class TextLine : Entry
         // add callbacks
         addOnKeyPress(&keysAnalyze);
     }
-
-  bool isDebugOn()
-  {
-      return debugFile.isOpen();
-  }
 
   private bool keysAnalyze(GdkEventKey * even, Widget widget)
    {
@@ -78,5 +75,4 @@ class TextLine : Entry
             default:return Keymap.keyvalName(keyval);
         }
     }
-
-  }
+}
