@@ -115,3 +115,12 @@ class History
         cursorPosition = 0;
     }
 }
+
+unittest {
+  File neant;
+  History his = new History("123", neant);
+  his.removeCharacter();
+  his.removeCharacter();
+  his.removeCharacter();
+  assert(his.getContent == "1");
+}
