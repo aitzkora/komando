@@ -116,11 +116,34 @@ class History
     }
 }
 
-unittest {
-  File neant;
-  History his = new History("123", neant);
-  his.removeCharacter();
-  his.removeCharacter();
-  his.removeCharacter();
-  assert(his.getContent == "1");
+
+debug (featureTest)
+{
+    import feature_test;
+    unittest
+    {
+        File neant;
+        feature("removing two characters", (f)
+                {
+                f.scenario("removing does not work",
+                        {
+                        History his = new History("123", neant);
+                        his.removeCharacter();
+                        his.removeCharacter();
+                        his.removeCharacter();
+                        his.getContent.shouldEqual("", "string value");
+                        });
+                }, "remove");
+        feature("inserting two characters", (f)
+                {
+                f.scenario("insertion is broken",
+                        {
+                        History his = new History("", neant);
+                        his.insertCharacter("a");
+                        his.insertCharacter("b");
+                        his.getContent.shouldEqual("ab", "string value");
+                        });
+                }, "insert");
 }
+}
+
