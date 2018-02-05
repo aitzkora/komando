@@ -14,7 +14,7 @@ class History
 
     this(in string text, ref File debugFile)
     {
-        content = text.dup ~ "_";
+        content = text.dup;
         cursorPosition = cast(uint)text.length;
         commandMode = true;
         this.debugFile = debugFile;
@@ -23,7 +23,14 @@ class History
 
     string getContent()
     {
+        if (content.length >= 1)
+        { 
         return content.idup;
+        }
+        else  // to avoid to return 0x0!!!
+        { 
+            return "";
+        }
     }
 
     int getCursorPosition()
@@ -59,7 +66,7 @@ class History
     {
         if (content.length >= 1)
         {
-            if (cursorPosition >= 1)
+            if (cursorPosition < content.length)
             {
                 content[cursorPosition .. $ - 1] = content[cursorPosition + 1 .. $].dup;
                 content.length--;
@@ -67,31 +74,31 @@ class History
             }
             else
             {
-                content[cursorPosition .. $-1] = content[cursorPosition + 1 .. $].dup;
-                content.length--;
+               content.length--;
+               cursorPosition--;
             }
             if (isDebugOn)
             {
-                debugFile.writef("remove char in %d-position content → %s\n", content);
+                debugFile.writeln("remove char in ", cursorPosition, " -position : content → ", content);
             }
         }
         else
         {
             if (isDebugOn)
             {
-                debugFile.writef("WARNING : cannot remove any character, the string is empty");
+                debugFile.writeln("WARNING : cannot remove any character, the string is empty");
             }
 
         }
 
-        return content.idup;
+        return getContent();
     }
 
     string insertCharacter(in string character)
     {
        content.insertInPlace(cursorPosition, character);
        cursorPosition++;
-       return content[0 .. $-1].idup;
+       return getContent();
     }
 
     void goLeft()
@@ -123,13 +130,22 @@ debug (featureTest)
     unittest
     {
         File neant;
-        feature("removing two characters", (f)
+        feature("removing three characters from 3-characters string", (f)
                 {
                 f.scenario("removing does not work",
                         {
                         History his = new History("123", neant);
                         his.removeCharacter();
                         his.removeCharacter();
+                        his.removeCharacter();
+                        his.getContent.shouldEqual("", "string value");
+                        });
+                }, "remove");
+        feature("removing character from a zero length string ", (f)
+                {
+                f.scenario("removing does not work",
+                        {
+                        History his = new History("", neant);
                         his.removeCharacter();
                         his.getContent.shouldEqual("", "string value");
                         });
