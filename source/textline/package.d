@@ -46,9 +46,8 @@ class TextLine : Entry
                                     break;
              case GdkKeysyms.GDK_dollar: hist.goEndOfLine();
                                          break;
-             case GdkKeysyms.GDK_caret: hist.goStartOfLine();
+             case GdkKeysyms.GDK_asciicircum: hist.goStartOfLine();
                                          break;
-
              default:break;
          }
      }
