@@ -66,9 +66,7 @@ class History
     {
         if (content.length >= 1)
         {
-            if (cursorPosition < content.length)
-            {
-                content[cursorPosition .. $ - 1] = content[cursorPosition + 1 .. $].dup;
+            if (cursorPosition < content.length && cursorPosition > 0)
                 content.length--;
                 cursorPosition--;
             }
@@ -109,14 +107,15 @@ class History
 
     void goRight()
     {
-        if (cursorPosition < content.length -1)
+        if (cursorPosition < content.length )
             cursorPosition++;
     }
 
     void goEndOfLine()
     {
-        cursorPosition = cast(uint)(content.length - 1);
+        cursorPosition = cast(uint)(content.length);
     }
+    
     void goStartOfLine()
     {
         cursorPosition = 0;
