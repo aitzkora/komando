@@ -67,6 +67,7 @@ class History
         if (content.length >= 1)
         {
             if (cursorPosition < content.length && cursorPosition > 0)
+            {
                 content.length--;
                 cursorPosition--;
             }
@@ -115,7 +116,7 @@ class History
     {
         cursorPosition = cast(uint)(content.length);
     }
-    
+
     void goStartOfLine()
     {
         cursorPosition = 0;
