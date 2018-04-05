@@ -56,7 +56,7 @@ class TextLine : Entry
          switch(even.keyval) {
              case GdkKeysyms.GDK_Escape: hist.setCommandMode(true);
                                          break;
-             case GdkKeysyms.GDK_Return: hist.execCommandMode();
+             case GdkKeysyms.GDK_Return: hist.execCommand();
                                          break;
              default: setText(hist.insertCharacter(keyToString(even.keyval)));
                       break;
@@ -71,6 +71,7 @@ class TextLine : Entry
         {
             case GdkKeysyms.GDK_space: return " ";
             case GdkKeysyms.GDK_BackSpace : return "";
+            case GdkKeysyms.GDK_slash: return "/";
             default:return Keymap.keyvalName(keyval);
         }
     }

@@ -3,7 +3,8 @@ module textline.history;
 import std.algorithm;
 import std.array;
 import std.stdio;
-
+import std.utf;
+import std.process;
 class History 
 {
     private char[] content;
@@ -11,6 +12,7 @@ class History
     private bool commandMode;
     File debugFile;
     bool isDebugOn;
+
 
     this(in string text, ref File debugFile)
     {
@@ -52,13 +54,15 @@ class History
         }
     }
 
-    void execCommandMode()
+    void execCommand()
     {
+        auto exec = execute(content);
         if (isDebugOn)
         {
-            debugFile.writeln("ERROR : exec commande No yet implemented");
+         debugFile.writeln("try to run the following command"~content);
+          if (exec.status != 0)
+            debugFile.writeln("ERROR : command did not work!");
         }
-
     }
 
 

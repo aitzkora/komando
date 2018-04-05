@@ -27,7 +27,7 @@ void main(string[] args)
     Main.init(args);
     MainWindow win = new MainWindow("Komandoa : ");
 
-    win.add(new TextLine("une chaine d'exemple", debugFile));
+    win.add(new TextLine("/usr/bin/xterm", debugFile));
     win.showAll();
     Main.run();
 }
