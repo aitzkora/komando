@@ -48,7 +48,9 @@ class TextLine : Entry
                                          break;
              case GdkKeysyms.GDK_asciicircum: hist.goStartOfLine();
                                          break;
-             default:break;
+            case GdkKeysyms.GDK_Return: hist.execCommandMode();
+                                         break;
+            default:break;
          }
      }
      else // we are in insert mode
@@ -56,10 +58,9 @@ class TextLine : Entry
          switch(even.keyval) {
              case GdkKeysyms.GDK_Escape: hist.setCommandMode(true);
                                          break;
-             case GdkKeysyms.GDK_Return: hist.execCommandMode();
-                                         break;
+             case GdkKeysyms.GDK_Return: break;
              default: setText(hist.insertCharacter(keyToString(even.keyval)));
-                      break;
+               break;
          }
      }
      return true;

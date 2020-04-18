@@ -3,7 +3,8 @@ module textline.history;
 import std.algorithm;
 import std.array;
 import std.stdio;
-
+import std.process;
+import core.stdc.stdlib;
 class History 
 {
     private char[] content;
@@ -25,7 +26,7 @@ class History
     {
         if (content.length >= 1)
         { 
-        return content.idup;
+            return content.idup;
         }
         else  // to avoid to return 0x0!!!
         { 
@@ -56,12 +57,24 @@ class History
     {
         if (isDebugOn)
         {
-            debugFile.writeln("ERROR : exec commande No yet implemented");
+            debugFile.writeln("executing commande : ", content.idup());
         }
-
+        auto pid = spawnProcess(content.idup().split());
+        scope(success){
+            if (isDebugOn)
+            {
+                debugFile.writeln("success");
+            }
+            exit(0); 
+        }
+        scope(failure){
+            if (isDebugOn)
+            {
+                debugFile.writeln("failed");
+            }
+            exit(-1); 
+        }
     }
-
-
     string removeCharacter()
     {
         if (content.length >= 1)
