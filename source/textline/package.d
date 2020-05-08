@@ -13,66 +13,91 @@ import gdk.Keymap;
 
 class TextLine : Entry
 {
-  History hist;
-  File debugFile;
-  bool isDebugOn;
-  this(in string text, ref File debugFile)
+    History hist;
+    File debugFile;
+    bool isDebugOn;
+    this(in string text, ref File debugFile)
     {
         super(text);
         this.debugFile = debugFile;
         isDebugOn = debugFile.isOpen();
         hist = new History(text, debugFile);
         // modify aspect 
-        modifyFont("Arial", 14);
+        modifyFont("Times", 18);
         modifyFg(StateType.NORMAL, new Color(0xFF,00,0xFF));
         modifyBg(StateType.NORMAL, new Color(0x00,00,0x00));
         // add callbacks
         addOnKeyPress(&keysAnalyze);
     }
 
-  private bool keysAnalyze(GdkEventKey * even, Widget widget)
-   {
-     if (hist.getCommandMode())
-     {
-         switch(even.keyval)
-         {
-            case GdkKeysyms.GDK_i: hist.setCommandMode(false);
-                                    break;
-             case GdkKeysyms.GDK_x: setText(hist.removeCharacter());
-                                    break;
-             case GdkKeysyms.GDK_l: hist.goRight();
-                                    break;
-             case GdkKeysyms.GDK_h: hist.goLeft();
-                                    break;
-             case GdkKeysyms.GDK_dollar: hist.goEndOfLine();
+    private bool keysAnalyze(GdkEventKey * even, Widget widget)
+    {
+        if (isDebugOn) 
+        {
+            debugFile.writeln("val = ", even.keyval);
+            debugFile.flush();
+        }
+        if (hist.getCommandMode())
+        {
+
+            switch(even.keyval)
+            {
+                case GdkKeysyms.GDK_i: hist.setCommandMode(false);
+                                       break;
+                case GdkKeysyms.GDK_x: setText(hist.removeCharacter());
+                                       setPosition(hist.getCursorPosition());
+                                       break;
+                case GdkKeysyms.GDK_l: hist.goRight();
+                                       setPosition(hist.getCursorPosition());
+                                       break;
+                case GdkKeysyms.GDK_h: hist.goLeft();
+                                       setPosition(hist.getCursorPosition());
+                                       break;
+                case GdkKeysyms.GDK_dollar: hist.goEndOfLine();
+                                       setPosition(hist.getCursorPosition());
+                                            break;
+                case GdkKeysyms.GDK_asciicircum: hist.goStartOfLine();
+                                       setPosition(hist.getCursorPosition());
+                                                 break;
+                case GdkKeysyms.GDK_Return: hist.execCommandMode();
+                                            break;
+                default:break;
+            }
+        }
+        else // we are in insert mode
+        {
+            switch(even.keyval) {
+                case GdkKeysyms.GDK_Escape: hist.setCommandMode(true);
+                                            break;
+                case GdkKeysyms.GDK_Return: break;
+                case GdkKeysyms.GDK_Tab: if ( hist.complete() )
+                                             modifyFg(StateType.NORMAL, new Color(0xFF,00,00));
                                          break;
-             case GdkKeysyms.GDK_asciicircum: hist.goStartOfLine();
-                                         break;
-            case GdkKeysyms.GDK_Return: hist.execCommandMode();
-                                         break;
-            default:break;
-         }
-     }
-     else // we are in insert mode
-     {
-         switch(even.keyval) {
-             case GdkKeysyms.GDK_Escape: hist.setCommandMode(true);
-                                         break;
-             case GdkKeysyms.GDK_Return: break;
-             default: setText(hist.insertCharacter(keyToString(even.keyval)));
-               break;
-         }
-     }
-     return true;
-   }
+                default: setText(hist.insertCharacter(keyToString(even.keyval)));
+                         break;
+            }
+        }
+        return true;
+    }
 
     string keyToString(uint keyval)
     {
+        if (isDebugOn)
+        {
+            debugFile.writeln("keyName = ", Keymap.keyvalName(keyval));
+        }
         switch(keyval)
         {
             case GdkKeysyms.GDK_space: return " ";
-            case GdkKeysyms.GDK_BackSpace : return "";
-            default:return Keymap.keyvalName(keyval);
+            case GdkKeysyms.GDK_minus: return "-";
+            case GdkKeysyms.GDK_slash: return "/";
+            case GdkKeysyms.GDK_A:..case GdkKeysyms.GDK_Z: 
+            case GdkKeysyms.GDK_a:..case GdkKeysyms.GDK_z: return Keymap.keyvalName(keyval);
+
+            default: return "";
         }
     }
+
+
+
 }

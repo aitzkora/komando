@@ -5,6 +5,7 @@ import std.array;
 import std.stdio;
 import std.process;
 import core.stdc.stdlib;
+
 class History 
 {
     private char[] content;
@@ -108,8 +109,11 @@ class History
 
     string insertCharacter(in string character)
     {
-       content.insertInPlace(cursorPosition, character);
-       cursorPosition++;
+       if (character.length >=1)
+       { 
+         content.insertInPlace(cursorPosition, character);
+         cursorPosition++;
+       }
        return getContent();
     }
 
@@ -132,8 +136,18 @@ class History
 
     void goStartOfLine()
     {
+        if (isDebugOn) 
+        {
+          debugFile.writeln("read an ^, to at the beginning of the line ");
+        }
         cursorPosition = 0;
     }
+
+    bool complete()
+   {
+     return false;
+   }
+
 }
 
 
