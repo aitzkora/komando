@@ -28,7 +28,15 @@ class TextLine : Entry
         modifyBg(StateType.NORMAL, new Color(0x00,00,0x00));
         // add callbacks
         addOnKeyPress(&keysAnalyze);
+        //addOnActivate(&entryActived);
     }
+
+    private bool entryActived()
+    {
+       this.setPosition(-1);
+       return true;
+    }
+
 
     private bool keysAnalyze(GdkEventKey * even, Widget widget)
     {
@@ -53,11 +61,13 @@ class TextLine : Entry
                 case GdkKeysyms.GDK_h: hist.goLeft();
                                        setPosition(hist.getCursorPosition());
                                        break;
-                case GdkKeysyms.GDK_dollar: hist.goEndOfLine();
-                                       setPosition(hist.getCursorPosition());
+                case GdkKeysyms.GDK_dollar: setPosition(hist.goEndOfLine()-1);
                                             break;
                 case GdkKeysyms.GDK_asciicircum: hist.goStartOfLine();
-                                       setPosition(hist.getCursorPosition());
+                                       setPosition(0);
+                                                 break;
+                case GdkKeysyms.GDK_A: setPosition(hist.goEndOfLine()-1);
+                                       hist.setCommandMode(false);
                                                  break;
                 case GdkKeysyms.GDK_Return: hist.execCommandMode();
                                             break;
@@ -69,9 +79,12 @@ class TextLine : Entry
             switch(even.keyval) {
                 case GdkKeysyms.GDK_Escape: hist.setCommandMode(true);
                                             break;
-                case GdkKeysyms.GDK_Return: break;
+                case GdkKeysyms.GDK_Return: hist.execCommandMode();
+                                            break;
                 case GdkKeysyms.GDK_Tab: if ( hist.complete() )
-                                             modifyFg(StateType.NORMAL, new Color(0xFF,00,00));
+                                             modifyFg(StateType.NORMAL, new Color(0x00,0xFF,00));
+                                         else
+                                             modifyFg(StateType.NORMAL, new Color(0xFF,0x00,00));
                                          break;
                 default: setText(hist.insertCharacter(keyToString(even.keyval)));
                          break;

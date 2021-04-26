@@ -13,6 +13,7 @@ import textline;
 
 import std.getopt;
 import std.stdio;
+
 void main(string[] args)
 {
     bool debugFlag;
@@ -27,7 +28,7 @@ void main(string[] args)
     Main.init(args);
     MainWindow win = new MainWindow("Komandoa : ");
 
-    win.add(new TextLine("ls /home/", debugFile));
+    win.add(new TextLine("", debugFile));
     win.showAll();
     Main.run();
 }

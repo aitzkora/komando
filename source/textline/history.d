@@ -129,9 +129,9 @@ class History
             cursorPosition++;
     }
 
-    void goEndOfLine()
+    uint goEndOfLine()
     {
-        cursorPosition = cast(uint)(content.length);
+        return cursorPosition = cast(uint)(content.length);
     }
 
     void goStartOfLine()
@@ -144,9 +144,9 @@ class History
     }
 
     bool complete()
-   {
-     return false;
-   }
+    {
+        return false;
+    }
 
 }
 
