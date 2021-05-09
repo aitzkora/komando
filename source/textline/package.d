@@ -69,6 +69,12 @@ class TextLine : Entry
                 case GdkKeysyms.GDK_A: setPosition(hist.goEndOfLine()-1);
                                        hist.setCommandMode(false);
                                                  break;
+                case GdkKeysyms.GDK_k : setText(hist.loadPreviousContent());
+                                        setPosition(0);
+                                        break;
+                case GdkKeysyms.GDK_j : setText(hist.loadNextContent());
+                                        setPosition(0);
+                                        break;
                 case GdkKeysyms.GDK_Return: hist.execCommandMode();
                                             break;
                 default:break;
