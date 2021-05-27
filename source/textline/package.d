@@ -92,6 +92,8 @@ class TextLine : Entry
                                  break;
         case GdkKeysyms.GDK_w : if (controlIsPressed)
                                   setText(hist.deleteLastInsertion());
+                                else
+                                  setText(hist.insertCharacter(keyToString(even.keyval)));
                                 break;
         default: setText(hist.insertCharacter(keyToString(even.keyval)));
                  break;
