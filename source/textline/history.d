@@ -24,7 +24,7 @@ class History
   this(in string text, ref File debugFile)
   {
     content = text.dup;
-    cursorPosition = cast(uint)text.length;
+    cursorPosition = cast(uint)text.length-1;
     commandMode = false;
     this.debugFile = debugFile;
     isDebugOn = debugFile.isOpen();
@@ -48,13 +48,14 @@ class History
     else
     {
       historyFile = File (fname, "r+"); 
+     if (isDebugOn) debugFile.writeln("content of the history file");
       foreach(line ; historyFile.byLine)
       {
         if (historyLength > maxHistoryLength-1) break;
-        history[historyLength++] = line;
+        history[historyLength++] = line[];
+          if (isDebugOn) debugFile.writeln(history[historyLength-1]);
       }
     }
-    if (isDebugOn) debugFile.writeln("content of the history file", history);
   }
 
   void closeHistoryFile()
@@ -164,8 +165,8 @@ class History
   {
     if (character.length >=1)
     { 
-      content.insertInPlace(cursorPosition, character);
-      cursorPosition++;
+      content.insertInPlace(++cursorPosition, character);
+      //++cursorPosition;
     }
     return getContent();
   }
@@ -241,22 +242,22 @@ class History
           {
           f.scenario("removing does not work",
               {
-              History his = new History("123", neant);
+              History his = new History("123".dup, neant);
               his.removeCharacter();
               his.removeCharacter();
               his.removeCharacter();
               his.getContent.shouldEqual("", "string value");
               });
-          }, "remove");
+          }, "remove", "entire");
       feature("removing character from a zero length string ", (f)
           {
-          f.scenario("removing does not work",
+          f.scenario("removing from empty does nothing",
               {
               History his = new History("", neant);
               his.removeCharacter();
               his.getContent.shouldEqual("", "string value");
               });
-          }, "remove");
+          }, "remove", "empty");
       feature("inserting two characters", (f)
           {
           f.scenario("insertion is broken",
