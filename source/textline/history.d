@@ -37,8 +37,8 @@ class History
   void loadHistoryFile()
   {
     auto fname =  environment.get("HOME") ~ "/.komando_hist";
-    historyLength = 1;
     history[0] = content;
+    historyLength = 1;
     if (!fname.exists) 
     {
       historyFile = File( fname, "w");
@@ -52,7 +52,7 @@ class History
       foreach(line ; historyFile.byLine)
       {
         if (historyLength > maxHistoryLength-1) break;
-        history[historyLength++] = line[];
+        history[historyLength++] = line[].dup;
           if (isDebugOn) debugFile.writeln(history[historyLength-1]);
       }
     }
